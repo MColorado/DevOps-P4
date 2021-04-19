@@ -11,9 +11,18 @@ on:
 
 jobs:
   build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v2
+      - name: NPM Install and Build
+        run: |
+          npm install
+          npm run build
 
+  test:
     runs-on: ${{ matrix.os }}
-
+  
     strategy:
       matrix:
         node-version: [12.x, 14.x]
@@ -22,13 +31,16 @@ jobs:
           - windows-latest
           
           
-    name: Node ${{ matrix.node-version }} on ${{ matrix.os }}
+    name: Testing on Node ${{ matrix.node-version }} on ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
       - name: Setup node
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
-      - run: npm install
-      - run: npm run build --if-present
-      - run: npm test
+      - name: NPM Install and Test
+        run: |
+          npm install
+          npm test
+        env: 
+          CI: true 
